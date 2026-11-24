@@ -1,6 +1,64 @@
-@DailyGlowApi_HostAddress = http://localhost:5138
+@DailyGlowApi_HostAddress = https://localhost:7160
 
-GET {{DailyGlowApi_HostAddress}}/weatherforecast/
+### 1. List all products
+GET {{DailyGlowApi_HostAddress}}/api/products
 Accept: application/json
 
-###
+### 2. Filter by category and skin type, with paging
+GET {{DailyGlowApi_HostAddress}}/api/products?category=Serum&skinType=Oily&page=1&pageSize=10
+Accept: application/json
+
+### 3. Create a product (201 Created)
+POST {{DailyGlowApi_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Hydrating Facial Cleanser",
+  "brand": "CeraVe",
+  "category": "Cleanser",
+  "activeIngredient": "None",
+  "suitableFor": "All",
+  "price": 14.00
+}
+
+### 4. Create another product (201 Created)
+POST {{DailyGlowApi_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Retinol 0.5% in Squalane",
+  "brand": "The Ordinary",
+  "category": "Serum",
+  "activeIngredient": "Retinol",
+  "suitableFor": "Oily",
+  "price": 9.80
+}
+
+### 5. Bad request: empty name and no category (400)
+POST {{DailyGlowApi_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "brand": "Test brand"
+}
+
+### 6. Get one product (200, or 404 if the id does not exist)
+GET {{DailyGlowApi_HostAddress}}/api/products/1
+Accept: application/json
+
+### 7. Update a product (204 No Content)
+PUT {{DailyGlowApi_HostAddress}}/api/products/1
+Content-Type: application/json
+
+{
+  "name": "Hydrating Facial Cleanser",
+  "brand": "CeraVe",
+  "category": "Cleanser",
+  "activeIngredient": "None",
+  "suitableFor": "Dry",
+  "price": 15.50
+}
+
+### 8. Delete a product (204 No Content)
+DELETE {{DailyGlowApi_HostAddress}}/api/products/1
