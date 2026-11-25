@@ -56,6 +56,12 @@ public class ProductService : IProductService
             return DeleteProductResult.NotFound;
         }
 
+        // A product that is used in a routine cannot be deleted
+        if (await _repository.IsUsedInRoutinesAsync(id))
+        {
+            return DeleteProductResult.InUse;
+        }
+
         await _repository.DeleteAsync(product);
         return DeleteProductResult.Deleted;
     }

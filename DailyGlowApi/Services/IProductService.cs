@@ -6,8 +6,6 @@ public enum DeleteProductResult
 {
     Deleted,
     NotFound,
-
-    // Not used yet, needed when routines are added
     InUse
 }
 

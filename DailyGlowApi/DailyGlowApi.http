@@ -62,3 +62,142 @@ Content-Type: application/json
 
 ### 8. Delete a product (204 No Content)
 DELETE {{DailyGlowApi_HostAddress}}/api/products/1
+
+### 9. Routines: create a cleanser to use in a routine (201 Created)
+# @name routineCleanser
+POST {{DailyGlowApi_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Foaming Facial Cleanser",
+  "brand": "CeraVe",
+  "category": "Cleanser",
+  "activeIngredient": "None",
+  "suitableFor": "Oily",
+  "price": 13.50
+}
+
+### 10. Routines: create a serum to use in a routine (201 Created)
+# @name routineSerum
+POST {{DailyGlowApi_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Niacinamide 10% + Zinc 1%",
+  "brand": "The Ordinary",
+  "category": "Serum",
+  "activeIngredient": "Niacinamide",
+  "suitableFor": "All",
+  "price": 6.50
+}
+
+### 11. Create a routine (201 Created)
+# @name createRoutine
+POST {{DailyGlowApi_HostAddress}}/api/routines
+Content-Type: application/json
+
+{
+  "name": "Morning routine",
+  "timeOfDay": "Morning"
+}
+
+### 12. Bad request: time of day is not Morning or Evening (400)
+POST {{DailyGlowApi_HostAddress}}/api/routines
+Content-Type: application/json
+
+{
+  "name": "Lunch routine",
+  "timeOfDay": "Afternoon"
+}
+
+### 13. Add step 1 (201 Created)
+# @name addStep1
+POST {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps
+Content-Type: application/json
+
+{
+  "productId": {{routineCleanser.response.body.$.id}},
+  "stepOrder": 1,
+  "instructions": "Massage onto wet skin, then rinse"
+}
+
+### 14. Add step 2 (201 Created)
+# @name addStep2
+POST {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps
+Content-Type: application/json
+
+{
+  "productId": {{routineSerum.response.body.$.id}},
+  "stepOrder": 2,
+  "instructions": "Apply 2 drops to dry skin"
+}
+
+### 15. Conflict: step order 1 is already used (409)
+POST {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps
+Content-Type: application/json
+
+{
+  "productId": {{routineSerum.response.body.$.id}},
+  "stepOrder": 1
+}
+
+### 16. Bad request: the product does not exist (400)
+POST {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps
+Content-Type: application/json
+
+{
+  "productId": 999999,
+  "stepOrder": 3
+}
+
+### 17. Not found: the routine does not exist (404)
+POST {{DailyGlowApi_HostAddress}}/api/routines/999999/steps
+Content-Type: application/json
+
+{
+  "productId": {{routineSerum.response.body.$.id}},
+  "stepOrder": 1
+}
+
+### 18. View the routine with its steps in order (200)
+GET {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}
+Accept: application/json
+
+### 19. List all routines with their step counts (200)
+GET {{DailyGlowApi_HostAddress}}/api/routines
+Accept: application/json
+
+### 20. List the steps of the routine (200)
+GET {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps
+Accept: application/json
+
+### 21. Update step 1 (204 No Content)
+PUT {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps/{{addStep1.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "productId": {{routineCleanser.response.body.$.id}},
+  "stepOrder": 1,
+  "instructions": "Use morning and night"
+}
+
+### 22. Update the routine (204 No Content)
+PUT {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "name": "Quick morning routine",
+  "timeOfDay": "Morning"
+}
+
+### 23. Delete step 2 (204 No Content)
+DELETE {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps/{{addStep2.response.body.$.id}}
+
+### 24. Conflict: the cleanser is still used in step 1, so it cannot be deleted (409)
+DELETE {{DailyGlowApi_HostAddress}}/api/products/{{routineCleanser.response.body.$.id}}
+
+### 25. Delete the routine (204 No Content). Its steps are deleted with it.
+DELETE {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}
+
+### 26. Now the cleanser is not used any more, so it can be deleted (204 No Content)
+DELETE {{DailyGlowApi_HostAddress}}/api/products/{{routineCleanser.response.body.$.id}}

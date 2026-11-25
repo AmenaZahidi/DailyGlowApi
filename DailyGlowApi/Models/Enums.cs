@@ -32,3 +32,9 @@ public enum SkinType
     Combination,
     Sensitive
 }
+
+public enum TimeOfDay
+{
+    Morning,
+    Evening
+}

@@ -22,6 +22,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Dependency injection: ask for the interface, get the class
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IRoutineRepository, RoutineRepository>();
+builder.Services.AddScoped<IRoutineService, RoutineService>();
 
 var app = builder.Build();
 

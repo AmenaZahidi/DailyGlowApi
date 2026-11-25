@@ -13,4 +13,5 @@ public interface IProductRepository
     Task<Product> AddAsync(Product product);
     Task UpdateAsync(Product product);
     Task DeleteAsync(Product product);
+    Task<bool> IsUsedInRoutinesAsync(int productId);
 }

@@ -62,4 +62,9 @@ public class ProductRepository : IProductRepository
         _db.Products.Remove(product);
         await _db.SaveChangesAsync();
     }
+
+    public async Task<bool> IsUsedInRoutinesAsync(int productId)
+    {
+        return await _db.RoutineSteps.AnyAsync(s => s.ProductId == productId);
+    }
 }
