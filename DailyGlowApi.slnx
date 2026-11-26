@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="DailyGlowApi.Tests/DailyGlowApi.Tests.csproj" Id="08ada0fb-ba3a-46f0-b82b-b09ba8fa9805" />
   <Project Path="DailyGlowApi/DailyGlowApi.csproj" />
 </Solution>

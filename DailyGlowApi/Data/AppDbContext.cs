@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Routine> Routines => Set<Routine>();
     public DbSet<RoutineStep> RoutineSteps => Set<RoutineStep>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -53,6 +54,15 @@ public class AppDbContext : DbContext
 
             // Two steps in the same routine cannot have the same order number
             entity.HasIndex(s => new { s.RoutineId, s.StepOrder }).IsUnique();
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.Property(u => u.Email).IsRequired().HasMaxLength(254);
+            entity.Property(u => u.PasswordHash).IsRequired().HasMaxLength(255);
+
+            // Each email can be registered only once
+            entity.HasIndex(u => u.Email).IsUnique();
         });
     }
 }

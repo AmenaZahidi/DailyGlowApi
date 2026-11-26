@@ -1,5 +1,90 @@
 @DailyGlowApi_HostAddress = https://localhost:7160
 
+# Login first: send A6, then every POST, PUT and DELETE below can use the token.
+# The token lasts 60 minutes. After that, send A6 again.
+
+### A1. Register a user (201 Created). Send it once. Sending it again gives 409.
+POST {{DailyGlowApi_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "student@example.com",
+  "password": "Glow12345"
+}
+
+### A2. Conflict: this email is already registered (409)
+POST {{DailyGlowApi_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "student@example.com",
+  "password": "Glow12345"
+}
+
+### A3. Bad request: the email is not valid and the password is too short (400)
+POST {{DailyGlowApi_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "not-an-email",
+  "password": "short"
+}
+
+### A4. Wrong password (401)
+POST {{DailyGlowApi_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "student@example.com",
+  "password": "WrongPassword1"
+}
+
+### A5. Unknown email (401, the same answer as a wrong password)
+POST {{DailyGlowApi_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "nobody@example.com",
+  "password": "Glow12345"
+}
+
+### A6. Log in (200 OK). The token from this answer is used by the requests below.
+# @name login
+POST {{DailyGlowApi_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "student@example.com",
+  "password": "Glow12345"
+}
+
+### A7. No token: a write request is refused (401)
+POST {{DailyGlowApi_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "No token test",
+  "brand": "Test",
+  "category": "Cleanser",
+  "activeIngredient": "None",
+  "suitableFor": "All",
+  "price": 5.00
+}
+
+### A8. A wrong token is refused too (401)
+POST {{DailyGlowApi_HostAddress}}/api/products
+Authorization: Bearer not-a-real-token
+Content-Type: application/json
+
+{
+  "name": "Bad token test",
+  "brand": "Test",
+  "category": "Cleanser",
+  "activeIngredient": "None",
+  "suitableFor": "All",
+  "price": 5.00
+}
+
 ### 1. List all products
 GET {{DailyGlowApi_HostAddress}}/api/products
 Accept: application/json
@@ -9,7 +94,9 @@ GET {{DailyGlowApi_HostAddress}}/api/products?category=Serum&skinType=Oily&page=
 Accept: application/json
 
 ### 3. Create a product (201 Created)
+# @name createProduct
 POST {{DailyGlowApi_HostAddress}}/api/products
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -23,6 +110,7 @@ Content-Type: application/json
 
 ### 4. Create another product (201 Created)
 POST {{DailyGlowApi_HostAddress}}/api/products
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -36,6 +124,7 @@ Content-Type: application/json
 
 ### 5. Bad request: empty name and no category (400)
 POST {{DailyGlowApi_HostAddress}}/api/products
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -44,11 +133,12 @@ Content-Type: application/json
 }
 
 ### 6. Get one product (200, or 404 if the id does not exist)
-GET {{DailyGlowApi_HostAddress}}/api/products/1
+GET {{DailyGlowApi_HostAddress}}/api/products/{{createProduct.response.body.$.id}}
 Accept: application/json
 
 ### 7. Update a product (204 No Content)
-PUT {{DailyGlowApi_HostAddress}}/api/products/1
+PUT {{DailyGlowApi_HostAddress}}/api/products/{{createProduct.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -61,11 +151,13 @@ Content-Type: application/json
 }
 
 ### 8. Delete a product (204 No Content)
-DELETE {{DailyGlowApi_HostAddress}}/api/products/1
+DELETE {{DailyGlowApi_HostAddress}}/api/products/{{createProduct.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
 
 ### 9. Routines: create a cleanser to use in a routine (201 Created)
 # @name routineCleanser
 POST {{DailyGlowApi_HostAddress}}/api/products
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -80,6 +172,7 @@ Content-Type: application/json
 ### 10. Routines: create a serum to use in a routine (201 Created)
 # @name routineSerum
 POST {{DailyGlowApi_HostAddress}}/api/products
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -94,6 +187,7 @@ Content-Type: application/json
 ### 11. Create a routine (201 Created)
 # @name createRoutine
 POST {{DailyGlowApi_HostAddress}}/api/routines
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -103,6 +197,7 @@ Content-Type: application/json
 
 ### 12. Bad request: time of day is not Morning or Evening (400)
 POST {{DailyGlowApi_HostAddress}}/api/routines
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -113,6 +208,7 @@ Content-Type: application/json
 ### 13. Add step 1 (201 Created)
 # @name addStep1
 POST {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -124,6 +220,7 @@ Content-Type: application/json
 ### 14. Add step 2 (201 Created)
 # @name addStep2
 POST {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -134,6 +231,7 @@ Content-Type: application/json
 
 ### 15. Conflict: step order 1 is already used (409)
 POST {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -143,6 +241,7 @@ Content-Type: application/json
 
 ### 16. Bad request: the product does not exist (400)
 POST {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -152,6 +251,7 @@ Content-Type: application/json
 
 ### 17. Not found: the routine does not exist (404)
 POST {{DailyGlowApi_HostAddress}}/api/routines/999999/steps
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -173,6 +273,7 @@ Accept: application/json
 
 ### 21. Update step 1 (204 No Content)
 PUT {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps/{{addStep1.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -183,6 +284,7 @@ Content-Type: application/json
 
 ### 22. Update the routine (204 No Content)
 PUT {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -192,12 +294,16 @@ Content-Type: application/json
 
 ### 23. Delete step 2 (204 No Content)
 DELETE {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}/steps/{{addStep2.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
 
 ### 24. Conflict: the cleanser is still used in step 1, so it cannot be deleted (409)
 DELETE {{DailyGlowApi_HostAddress}}/api/products/{{routineCleanser.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
 
 ### 25. Delete the routine (204 No Content). Its steps are deleted with it.
 DELETE {{DailyGlowApi_HostAddress}}/api/routines/{{createRoutine.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
 
 ### 26. Now the cleanser is not used any more, so it can be deleted (204 No Content)
 DELETE {{DailyGlowApi_HostAddress}}/api/products/{{routineCleanser.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
