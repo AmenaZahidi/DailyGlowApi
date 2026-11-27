@@ -1,5 +1,6 @@
 using DailyGlowApi.Dtos;
 using DailyGlowApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DailyGlowApi.Controllers;
@@ -39,6 +40,7 @@ public class RoutinesController : ControllerBase
     }
 
     // POST api/routines
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<RoutineDetailDto>> Create(CreateRoutineDto dto)
     {
@@ -47,6 +49,7 @@ public class RoutinesController : ControllerBase
     }
 
     // PUT api/routines/3
+    [Authorize]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, UpdateRoutineDto dto)
     {
@@ -60,6 +63,7 @@ public class RoutinesController : ControllerBase
     }
 
     // DELETE api/routines/3 (its steps are deleted too)
+    [Authorize]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

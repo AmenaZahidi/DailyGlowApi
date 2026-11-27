@@ -110,6 +110,33 @@ namespace DailyGlowApi.Migrations
                     b.ToTable("RoutineSteps");
                 });
 
+            modelBuilder.Entity("DailyGlowApi.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("DailyGlowApi.Models.RoutineStep", b =>
                 {
                     b.HasOne("DailyGlowApi.Models.Product", "Product")
