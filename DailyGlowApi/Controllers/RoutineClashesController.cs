@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DailyGlowApi.Controllers;
 
-// Handles the clash check of a routine: /api/routines/{routineId}/clashes
-// Anyone can call it, so there is no [Authorize].
+// Clash check for a routine. Anyone can call it, so there is no [Authorize].
 [ApiController]
 [Route("api/routines/{routineId:int}/clashes")]
 public class RoutineClashesController : ControllerBase
@@ -17,8 +16,7 @@ public class RoutineClashesController : ControllerBase
         _service = service;
     }
 
-    // GET api/routines/3/clashes
-    // Lists the products in the routine that should not be used together
+    // GET api/routines/3/clashes (products that should not be used together)
     [HttpGet]
     public async Task<ActionResult<ClashReportDto>> Get(int routineId)
     {

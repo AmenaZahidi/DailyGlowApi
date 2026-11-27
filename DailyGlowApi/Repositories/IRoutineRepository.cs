@@ -2,8 +2,7 @@ using DailyGlowApi.Models;
 
 namespace DailyGlowApi.Repositories;
 
-// Database operations for routines and their steps.
-// Steps only exist inside a routine, so this one repository handles both.
+// Database operations for routines and their steps (one repository for both).
 public interface IRoutineRepository
 {
     Task<IReadOnlyList<Routine>> GetAllAsync();

@@ -40,19 +40,19 @@ public class AppDbContext : DbContext
         {
             entity.Property(s => s.Instructions).HasMaxLength(250);
 
-            // One routine has many steps. Deleting a routine deletes its steps.
+            // A routine has many steps. Deleting it deletes its steps.
             entity.HasOne(s => s.Routine)
                 .WithMany(r => r.Steps)
                 .HasForeignKey(s => s.RoutineId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // One product can be used in many steps. A used product cannot be deleted.
+            // A product is in many steps. A used product cannot be deleted.
             entity.HasOne(s => s.Product)
                 .WithMany()
                 .HasForeignKey(s => s.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Two steps in the same routine cannot have the same order number
+            // Two steps in one routine cannot share an order number
             entity.HasIndex(s => new { s.RoutineId, s.StepOrder }).IsUnique();
         });
 

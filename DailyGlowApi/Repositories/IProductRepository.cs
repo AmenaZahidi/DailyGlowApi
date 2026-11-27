@@ -2,8 +2,7 @@ using DailyGlowApi.Models;
 
 namespace DailyGlowApi.Repositories;
 
-// The only place that talks to the database.
-// Using an interface lets us fake it in unit tests.
+// Talks to the database. An interface, so unit tests can fake it.
 public interface IProductRepository
 {
     Task<IReadOnlyList<Product>> GetAllAsync(

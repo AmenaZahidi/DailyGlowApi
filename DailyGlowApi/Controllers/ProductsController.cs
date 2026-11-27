@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DailyGlowApi.Controllers;
 
-// Handles the /api/products endpoints.
-// It only deals with HTTP. The logic is in the service.
+// The /api/products endpoints. Only HTTP here; the logic is in ProductService.
 [ApiController]
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase

@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DailyGlowApi.Controllers;
 
-// Handles the /api/routines endpoints.
-// The steps are handled in RoutineStepsController.
+// The /api/routines endpoints. The steps are in RoutineStepsController.
 [ApiController]
 [Route("api/[controller]")]
 public class RoutinesController : ControllerBase

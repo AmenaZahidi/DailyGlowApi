@@ -3,7 +3,7 @@ using DailyGlowApi.Models;
 
 namespace DailyGlowApi.Dtos;
 
-// Optional filters and paging from the query string, e.g. ?category=Serum&page=1
+// Optional filters and paging, e.g. ?category=Serum&page=1
 public class ProductQueryParameters
 {
     public ProductCategory? Category { get; set; }

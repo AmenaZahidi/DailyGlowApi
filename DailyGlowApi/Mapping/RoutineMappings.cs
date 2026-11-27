@@ -25,7 +25,7 @@ public static class RoutineMappings
         return new RoutineDetailDto(routine.Id, routine.Name, routine.TimeOfDay, steps);
     }
 
-    // The step must have its Product loaded, because the DTO shows the product name and brand
+    // Load the step's Product first: the DTO shows its name and brand
     public static RoutineStepDto ToDto(this RoutineStep step)
     {
         return new RoutineStepDto(

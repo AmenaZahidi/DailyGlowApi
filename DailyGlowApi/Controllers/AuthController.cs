@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DailyGlowApi.Controllers;
 
-// Handles the /api/auth endpoints (register and login). Anyone can call them.
-// It only deals with HTTP. The logic is in the service.
+// Register and login (/api/auth). Anyone can call it.
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
